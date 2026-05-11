@@ -102,4 +102,5 @@ pkg/
 *.bak
 *.tmp
 *.temp
-*.txt
+# Ensure requirements.txt is NOT ignored even if *.txt was here
+!requirements.txt
