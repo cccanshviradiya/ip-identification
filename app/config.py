@@ -23,7 +23,8 @@ LOG_LEVEL: str = os.getenv("LOG_LEVEL", "DEBUG")
 # ─── Database ────────────────────────────────────────────────────────────────
 if os.getenv("VERCEL") == "1":
     # Vercel's serverless functions have a read-only filesystem except for /tmp
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:////tmp/ip_identification.db")
+    # Force the use of /tmp, ignoring the user's environment variable if they copy-pasted .env
+    DATABASE_URL: str = "sqlite:////tmp/ip_identification.db"
 else:
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./logs/ip_identification.db")
 
