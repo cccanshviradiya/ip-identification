@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mediya IP Intel — B2B IP Identification Platform</title>
+  <meta name="description" content="Identify the company behind any IP address. Built for Indian B2B traffic — powered by IPinfo, WHOIS, and Apollo.io enrichment." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ── Animated background ── -->
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="logo-text">Mediya<span class="logo-accent"> IP Intel</span></span>
+      </div>
+      <nav class="header-nav">
+        <a href="/docs" target="_blank" id="nav-api-docs" class="nav-link">API Docs</a>
+        <a href="/api/logs/recent" target="_blank" id="nav-logs" class="nav-link nav-link-highlight">View Logs</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero Section ── -->
+  <main class="main-content">
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        B2B Traffic Intelligence
+      </div>
+      <h1 class="hero-title">
+        Identify the company<br />
+        <span class="gradient-text">behind any IP address</span>
+      </h1>
+      <p class="hero-subtitle">
+        Enter a public IPv4 address to instantly classify, validate, and enrich it with
+        real company firmographics — powered by IPinfo, reverse DNS, and Apollo.io.
+      </p>
+    </section>
+
+    <!-- ── Input Card ── -->
+    <section class="input-section">
+      <div class="input-card" id="input-card">
+        <div class="input-row">
+          <div class="ip-input-wrapper">
+            <span class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M6 10h2M6 14h2M10 10h8M10 14h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="ip-input"
+              class="ip-input"
+              placeholder="Enter IP address (e.g. 103.21.244.1)"
+              autocomplete="off"
+              spellcheck="false"
+              maxlength="45"
+            />
+          </div>
+          <button id="identify-btn" class="identify-btn" onclick="identifyIP()">
+            <span class="btn-text">Identify Company</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Loading State ── -->
+    <section class="result-section" id="loading-section" style="display:none">
+      <div class="loading-card">
+        <div class="pipeline-steps" id="pipeline-steps">
+          <div class="pipeline-step active" id="step-lookup">
+            <div class="step-spinner"></div>
+            <span>IPinfo lookup</span>
+          </div>
+          <div class="pipeline-step" id="step-classify">
+            <div class="step-dot"></div>
+            <span>Classification</span>
+          </div>
+          <div class="pipeline-step" id="step-rdns">
+            <div class="step-dot"></div>
+            <span>Reverse DNS</span>
+          </div>
+          <div class="pipeline-step" id="step-domain">
+            <div class="step-dot"></div>
+            <span>Domain extraction</span>
+          </div>
+          <div class="pipeline-step" id="step-validate">
+            <div class="step-dot"></div>
+            <span>Domain validation</span>
+          </div>
+          <div class="pipeline-step" id="step-enrich">
+            <div class="step-dot"></div>
+            <span>Apollo enrichment</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Result Card ── -->
+    <section class="result-section" id="result-section" style="display:none">
+      <div class="result-card" id="result-card">
+
+        <!-- Status Banner -->
+        <div class="result-status-bar" id="result-status-bar">
+          <div class="status-icon" id="status-icon"></div>
+          <div class="status-text">
+            <span class="status-label" id="status-label"></span>
+            <span class="status-detail" id="status-detail"></span>
+          </div>
+          <div class="classification-badge" id="classification-badge"></div>
+        </div>
+
+        <!-- Main Info Grid -->
+        <div class="result-grid" id="result-grid">
+
+          <!-- IP & Network Block -->
+          <div class="result-block" id="block-network">
+            <h3 class="block-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M12 2a14.5 14.5 0 0 1 4 10 14.5 14.5 0 0 1-4 10 14.5 14.5 0 0 1-4-10 14.5 14.5 0 0 1 4-10z" stroke="currentColor" stroke-width="1.8"/><path d="M2 12h20" stroke="currentColor" stroke-width="1.8"/></svg>
+              Network Info
+            </h3>
+            <div class="info-rows" id="network-info"></div>
+          </div>
+
+          <!-- Company Block -->
+          <div class="result-block" id="block-company">
+            <h3 class="block-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke="currentColor" stroke-width="1.8"/></svg>
+              Company Details
+            </h3>
+            <div class="info-rows" id="company-info"></div>
+          </div>
+
+        </div>
+
+        <!-- Raw JSON Toggle -->
+        <div class="json-section">
+          <button class="json-toggle-btn" id="json-toggle-btn" onclick="toggleJSON()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            View Raw JSON
+          </button>
+          <div class="json-container" id="json-container" style="display:none">
+            <pre class="json-pre" id="json-output"></pre>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Error Section ── -->
+    <section class="result-section" id="error-section" style="display:none">
+      <div class="error-card">
+        <div class="error-icon">⚠</div>
+        <h3 class="error-title" id="error-title">Something went wrong</h3>
+        <p class="error-message" id="error-message"></p>
+        <button class="retry-btn" onclick="resetUI()">Try Again</button>
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <p>
+      Mediya IP Intel — MVP/POC &nbsp;·&nbsp;
+      Built with FastAPI + IPinfo + Apollo.io &nbsp;·&nbsp;
+      <a href="/docs" target="_blank">API Reference</a>
+    </p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
