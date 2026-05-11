@@ -13,8 +13,11 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from config import LOG_LEVEL
 
+def _is_vercel():
+    return bool(os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV") or os.getenv("VERCEL_URL") or os.getenv("AWS_EXECUTION_ENV"))
+
 # ─── Ensure logs directory exists locally ───────────────────────────────────────
-if os.getenv("VERCEL") != "1":
+if not _is_vercel():
     os.makedirs("logs", exist_ok=True)
 
 # ─── Python Application Logger ────────────────────────────────────────────────
@@ -42,7 +45,7 @@ def get_logger(name: str = "ip_identification") -> logging.Logger:
     logger.addHandler(console_handler)
 
     # File handler
-    log_file_path = "/tmp/app.log" if os.getenv("VERCEL") == "1" else "logs/app.log"
+    log_file_path = "/tmp/app.log" if _is_vercel() else "logs/app.log"
     file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
@@ -57,7 +60,7 @@ class PipelineLogger:
     Also appends a JSON record to logs/pipeline_results.jsonl for easy debugging.
     """
 
-    JSONL_LOG_PATH = "/tmp/pipeline_results.jsonl" if os.getenv("VERCEL") == "1" else "logs/pipeline_results.jsonl"
+    JSONL_LOG_PATH = "/tmp/pipeline_results.jsonl" if _is_vercel() else "logs/pipeline_results.jsonl"
 
     def __init__(self):
         self.app_logger = get_logger("pipeline")

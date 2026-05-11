@@ -21,9 +21,9 @@ APP_ENV: str = os.getenv("APP_ENV", "development")
 LOG_LEVEL: str = os.getenv("LOG_LEVEL", "DEBUG")
 
 # ─── Database ────────────────────────────────────────────────────────────────
-if os.getenv("VERCEL") == "1":
-    # Vercel's serverless functions have a read-only filesystem except for /tmp
-    # Force the use of /tmp, ignoring the user's environment variable if they copy-pasted .env
+# Vercel's serverless functions have a read-only filesystem except for /tmp
+# Check multiple Vercel environment variables to be safe (build & runtime)
+if os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV") or os.getenv("VERCEL_URL") or os.getenv("AWS_EXECUTION_ENV"):
     DATABASE_URL: str = "sqlite:////tmp/ip_identification.db"
 else:
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./logs/ip_identification.db")

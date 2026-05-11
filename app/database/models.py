@@ -67,7 +67,8 @@ class IPLookupLog(Base):
 def init_db():
     """Create all tables if they don't exist. Called at app startup."""
     # Ensure the logs directory exists locally
-    if os.getenv("VERCEL") != "1":
+    is_vercel = bool(os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV") or os.getenv("VERCEL_URL") or os.getenv("AWS_EXECUTION_ENV"))
+    if not is_vercel:
         os.makedirs("logs", exist_ok=True)
     Base.metadata.create_all(bind=engine)
 
