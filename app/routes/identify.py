@@ -218,52 +218,54 @@ async def identify_ip(
         logger.info(f"[6/6] No valid domain, using clean name for fallback: {clean_name}")
         company_data = apollo_svc.enrich("", company_name=clean_name)
     elif not org and hostname:
-        # IPinfo had no org at all — try to scrape using the hostname domain
-        hostname_domain = sanitize_domain(
-            domain_extractor_svc.extract_from_hostname(hostname)
-        )
-        if hostname_domain:
-            logger.info(
-                f"[6/6] IPinfo org missing. Scraping hostname domain: {hostname_domain}"
-            )
-            scraped = scraper_svc.scrape_company_website(hostname_domain)
-            if scraped:
-                company_data = {
-                    "name": scraped.get("name") or hostname_domain,
-                    "domain": hostname_domain,
-                    "industry": scraped.get("industry") or "Unknown",
-                    "sub_industry": [],
-                    "employee_count": None,
-                    "employee_range": "Unknown",
-                    "revenue_range": "Unknown",
-                    "founded_year": None,
-                    "description": scraped.get("description") or "",
-                    "linkedin_url": "",
-                    "website_url": scraped.get("website_url") or f"https://{hostname_domain}",
-                    "phone": scraped.get("phone") or "",
-                    "city": "",
-                    "state": "",
-                    "country": scraped.get("country") or "",
-                    "source": scraped.get("source", "web_scrape"),
-                    "mock": False,
-                    "scrape_fallback": True,
-                }
+        # --- SCRAPING DISABLED AS PER USER REQUEST ---
+        pass
+        # # IPinfo had no org at all — try to scrape using the hostname domain
+        # hostname_domain = sanitize_domain(
+        #     domain_extractor_svc.extract_from_hostname(hostname)
+        # )
+        # if hostname_domain:
+        #     logger.info(
+        #         f"[6/6] IPinfo org missing. Scraping hostname domain: {hostname_domain}"
+        #     )
+        #     scraped = scraper_svc.scrape_company_website(hostname_domain)
+        #     if scraped:
+        #         company_data = {
+        #             "name": scraped.get("name") or hostname_domain,
+        #             "domain": hostname_domain,
+        #             "industry": scraped.get("industry") or "Unknown",
+        #             "sub_industry": [],
+        #             "employee_count": None,
+        #             "employee_range": "Unknown",
+        #             "revenue_range": "Unknown",
+        #             "founded_year": None,
+        #             "description": scraped.get("description") or "",
+        #             "linkedin_url": "",
+        #             "website_url": scraped.get("website_url") or f"https://{hostname_domain}",
+        #             "phone": scraped.get("phone") or "",
+        #             "city": "",
+        #             "state": "",
+        #             "country": scraped.get("country") or "",
+        #             "source": scraped.get("source", "web_scrape"),
+        #             "mock": False,
+        #             "scrape_fallback": True,
+        #         }
 
     # ── Step 9: Patch partial results via deep scraping ────────────────────
-    # Fires whenever:
-    #   • company_data is None (no enrichment at all)
-    #   • company_data["mock"] is True (Apollo + all strategies failed)
-    #   • Key fields are missing (name/description/industry/city all empty)
-    needs_scrape_patch = (
-        company_data is None
-        or company_data.get("mock") is True
-        or not any([
-            company_data.get("description"),
-            company_data.get("industry"),
-            company_data.get("city"),
-            company_data.get("founded_year"),
-        ])
-    )
+    # SCRAPING DISABLED AS PER USER REQUEST
+    needs_scrape_patch = False
+    
+    # original logic:
+    # needs_scrape_patch = (
+    #     company_data is None
+    #     or company_data.get("mock") is True
+    #     or not any([
+    #         company_data.get("description"),
+    #         company_data.get("industry"),
+    #         company_data.get("city"),
+    #         company_data.get("founded_year"),
+    #     ])
+    # )
 
     if needs_scrape_patch:
         # Determine the best domain to scrape against
