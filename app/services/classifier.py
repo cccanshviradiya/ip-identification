@@ -5,7 +5,7 @@ Uses IPinfo metadata and keyword matching against known provider lists.
 
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from config import ISP_KEYWORDS, HOSTING_KEYWORDS, VPN_KEYWORDS
+from config import ISP_KEYWORDS, HOSTING_KEYWORDS, VPN_KEYWORDS, MOBILE_KEYWORDS, GOV_KEYWORDS, PRIVATE_KEYWORDS
 
 
 class IPClassifier:
@@ -15,8 +15,11 @@ class IPClassifier:
     Classification priority:
       1. VPN / Proxy  (reject)
       2. Cloud Hosting (reject)
-      3. ISP / Residential (reject)
-      4. Corporate (accept)
+      3. Mobile / GSM (reject)
+      4. Government (reject)
+      5. Private Customer (reject)
+      6. ISP / Residential (reject)
+      7. Corporate (accept)
     """
 
     def classify(self, ipinfo_data: dict) -> dict:
@@ -56,7 +59,22 @@ class IPClassifier:
            self._matches_keywords(hostname, HOSTING_KEYWORDS):
             return self._result("hosting", f"Keyword match: Cloud/Hosting in org='{org}'", False)
 
-        # ── 5. ISP keyword match ───────────────────────────────────────────
+        # ── 5. Mobile/GSM keyword match ────────────────────────────────────
+        if self._matches_keywords(org, MOBILE_KEYWORDS) or \
+           self._matches_keywords(hostname, MOBILE_KEYWORDS):
+            return self._result("mobile", f"Keyword match: Mobile/GSM in org='{org}'", False)
+
+        # ── 6. Government keyword match ────────────────────────────────────
+        if self._matches_keywords(org, GOV_KEYWORDS) or \
+           self._matches_keywords(hostname, GOV_KEYWORDS):
+            return self._result("gov", f"Keyword match: Government body in org='{org}'", False)
+
+        # ── 7. Private Customer keyword match ──────────────────────────────
+        if self._matches_keywords(org, PRIVATE_KEYWORDS) or \
+           self._matches_keywords(hostname, PRIVATE_KEYWORDS):
+            return self._result("isp", f"Keyword match: Private Customer in org='{org}'", False)
+
+        # ── 8. ISP keyword match ───────────────────────────────────────────
         if self._matches_keywords(org, ISP_KEYWORDS) or \
            self._matches_keywords(hostname, ISP_KEYWORDS):
             return self._result("isp", f"Keyword match: ISP provider in org='{org}'", False)

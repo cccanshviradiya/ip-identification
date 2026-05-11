@@ -36,6 +36,23 @@ ISP_KEYWORDS = [
     "tikona", "spectranet", "atria", "excitel", "den networks", "alliance broadband",
     "gtpl", "k broadband", "m-connect", "netplus", "railwire", "wishnet",
     "comcast", "verizon", "at&t", "spectrum", "cox", "telekom", "orange", "telefonica",
+    "kpn", "matrixdata", "netrebel", "euronet", "etisalat", "cabo verde",
+    "internexa", "lycatel", "bite latvija", "dynamic ip", "residential", "pppoe",
+]
+
+# Keywords to detect Mobile/GSM networks
+MOBILE_KEYWORDS = [
+    "mobile", "gsm", "gprs", "umts", "hspda", "kyivstar", "cell", "wireless",
+]
+
+# Keywords to detect Government/Public bodies
+GOV_KEYWORDS = [
+    "belastingdienst", "gemeente", "ministry", "government", "city of", "municipality",
+]
+
+# Keywords to detect Private/Unknown individuals
+PRIVATE_KEYWORDS = [
+    "private customer",
 ]
 
 # Keywords to detect Cloud/Hosting providers
@@ -45,6 +62,8 @@ HOSTING_KEYWORDS = [
     "godaddy", "bluehost", "namecheap", "rackspace", "fastly", "akamai",
     "alibaba", "tencent", "oracle cloud", "ibm cloud", "liquid web",
     "contabo", "interserver", "siteground", "wp engine", "pantry",
+    "latitude.sh", "ionos", "register.it", "cdn77", "netskope", "egihosting",
+    "20 point networks", "copaco", "amarnet",
 ]
 
 # Keywords to detect VPN/Proxy providers
